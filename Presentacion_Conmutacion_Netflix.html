@@ -1,0 +1,3115 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f7f9fc">
+    <meta name="description"
+        content="Presentación en tres partes: introducción a VPN y Netflix, opciones de configuración en Windows y práctica real desde una computadora. Referencias con fuentes originales.">
+    <title>Netflix y VPN · Práctica desde la computadora</title>
+    <style>
+        :root {
+            --paper: #f7f9fc;
+            --ink: #152b46;
+            --muted: #56687e;
+            --line: #d5e0ed;
+            --navy: #133b63;
+            --ice: #b9ddfa;
+            --blue: #286db4;
+            --soft: #edf4fb;
+            --gutter: clamp(22px, 5vw, 78px)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif
+        }
+
+        button {
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 11px 18px;
+            transition: background .18s, transform .18s
+        }
+
+        button:hover:not(:disabled),
+        .button:hover {
+            background: var(--soft);
+            transform: translateY(-1px)
+        }
+
+        button:disabled {
+            opacity: .4;
+            cursor: default
+        }
+
+        a {
+            color: var(--blue);
+            text-underline-offset: 4px
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #2e7dbb;
+            outline-offset: 4px
+        }
+
+        .primary {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: #fff
+        }
+
+        .primary:hover:not(:disabled) {
+            background: #20517f
+        }
+
+        .button {
+            display: inline-block;
+            padding: 13px 19px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px
+        }
+
+        .button.primary:hover {
+            background: #20517f
+        }
+
+        .blue {
+            color: var(--blue)
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        header {
+            height: 75px;
+            margin: 0 var(--gutter);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: -.6px;
+            font-size: 21px;
+            text-decoration: none;
+            color: var(--ink)
+        }
+
+        .brand span {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0;
+            margin-left: 12px
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px
+        }
+
+        .top-actions button {
+            font-size: 12px;
+            padding: 9px 13px
+        }
+
+        .top-actions button[aria-pressed=true] {
+            background: var(--navy);
+            color: #fff;
+            border-color: var(--navy)
+        }
+
+        .part-nav {
+            display: flex;
+            margin: 0 var(--gutter);
+            gap: 24px;
+            border-bottom: 1px solid var(--line);
+            min-height: 49px;
+            align-items: stretch
+        }
+
+        .part-nav button {
+            padding: 14px 0 12px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: .3px
+        }
+
+        .part-nav button[aria-current=true] {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+            font-weight: 700
+        }
+
+        .part-nav button:hover {
+            background: transparent;
+            transform: none;
+            color: var(--ink)
+        }
+
+        main {
+            max-width: 1600px;
+            margin: auto;
+            padding: 0 var(--gutter) 98px
+        }
+
+        .slide {
+            display: none;
+            min-height: calc(100svh - 222px);
+            padding: 34px 0 18px
+        }
+
+        .slide.active {
+            display: block
+        }
+
+        .slide.active>* {
+            animation: arrive .45s both
+        }
+
+        .slide.active>:nth-child(3) {
+            animation-delay: .04s
+        }
+
+        .slide.active>:nth-child(4) {
+            animation-delay: .08s
+        }
+
+        .slide.active>:nth-child(5) {
+            animation-delay: .12s
+        }
+
+        @keyframes arrive {
+            from {
+                opacity: 0;
+                transform: translateY(13px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0
+        }
+
+        h1 {
+            font-size: clamp(50px, 5.5vw, 82px);
+            line-height: 1.02;
+            letter-spacing: -.055em;
+            margin-bottom: 24px
+        }
+
+        h2 {
+            font-size: clamp(32px, 3.5vw, 52px);
+            letter-spacing: -.04em;
+            line-height: 1.1;
+            margin-bottom: 21px;
+            max-width: 1180px
+        }
+
+        h3 {
+            font-size: 23px;
+            letter-spacing: -.4px;
+            line-height: 1.2;
+            margin-bottom: 13px
+        }
+
+        .lead {
+            font-size: clamp(18px, 1.6vw, 23px);
+            line-height: 1.5;
+            color: var(--muted);
+            max-width: 1080px;
+            margin-bottom: 27px
+        }
+
+        .eyebrow,
+        .mini-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 17px;
+            line-height: 1.5
+        }
+
+        .mini-label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 1.2px
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 44px;
+            align-items: start
+        }
+
+        .rule-col {
+            border-top: 1px solid var(--line);
+            padding-top: 23px
+        }
+
+        .rule-col p,
+        .body-text {
+            font-size: 19px;
+            line-height: 1.55;
+            color: var(--muted);
+            margin-bottom: 18px
+        }
+
+        .takeaway {
+            border-top: 1px solid var(--line);
+            padding: 21px 0 0;
+            margin: 27px 0 0;
+            font-size: 20px;
+            line-height: 1.5
+        }
+
+        .callout {
+            border-left: 3px solid #568fc1;
+            padding: 15px 20px;
+            background: var(--soft);
+            font-size: 16px;
+            line-height: 1.55;
+            margin: 25px 0 0
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 25px
+        }
+
+        .big-statement {
+            padding: 28px 30px;
+            background: var(--soft);
+            border-radius: 4px
+        }
+
+        .big-statement p {
+            font-size: clamp(25px, 2.55vw, 36px);
+            line-height: 1.25;
+            letter-spacing: -.8px;
+            margin-bottom: 20px
+        }
+
+        .big-statement strong {
+            color: var(--blue);
+            font-weight: 600
+        }
+
+        .big-statement>span:last-child {
+            font-size: 17px;
+            color: var(--muted);
+            line-height: 1.5;
+            display: block
+        }
+
+        .plain-list {
+            padding-left: 22px;
+            margin: 0;
+            font-size: 19px;
+            line-height: 1.5
+        }
+
+        .plain-list li {
+            padding-left: 3px;
+            margin: 13px 0
+        }
+
+        code {
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: .96em
+        }
+
+        .spaced {
+            margin-top: 27px
+        }
+
+        .cover.active {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            padding-top: 38px
+        }
+
+        .cover .lead {
+            font-size: 20px;
+            margin-bottom: 17px;
+            max-width: 570px
+        }
+
+        .cover-context {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+            max-width: 550px
+        }
+
+        .hero-network {
+            background: var(--navy);
+            color: var(--paper);
+            padding: 29px 32px;
+            border-radius: 4px
+        }
+
+        .hero-network .eyebrow {
+            color: #b9cde1
+        }
+
+        .country-pair {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 22px;
+            margin: 28px 0
+        }
+
+        .country-pair b {
+            font-size: 59px;
+            line-height: 1;
+            font-weight: 400;
+            letter-spacing: -3px
+        }
+
+        .country-pair small {
+            display: block;
+            font-size: 11px;
+            margin-top: 10px;
+            max-width: 100px;
+            line-height: 1.5;
+            color: #c5d8eb
+        }
+
+        .route-track {
+            height: 2px;
+            background: #5e84aa;
+            flex: 1;
+            position: relative
+        }
+
+        .route-track:before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--ice);
+            border-radius: 50%;
+            position: absolute;
+            top: -3px;
+            animation: packet 2.7s linear infinite
+        }
+
+        @keyframes packet {
+            from {
+                left: 0
+            }
+
+            to {
+                left: calc(100% - 8px)
+            }
+        }
+
+        .agenda {
+            border-top: 1px solid #42688e;
+            margin-top: 23px;
+            padding-top: 7px
+        }
+
+        .agenda button {
+            display: flex;
+            width: 100%;
+            text-align: left;
+            gap: 18px;
+            border: 0;
+            border-radius: 0;
+            padding: 15px 0;
+            color: #fff;
+            align-items: center
+        }
+
+        .agenda button:hover {
+            background: transparent;
+            color: var(--ice)
+        }
+
+        .agenda button>span {
+            font-size: 15px;
+            color: var(--ice);
+            font-variant-numeric: tabular-nums
+        }
+
+        .agenda b {
+            font-size: 18px;
+            font-weight: 500;
+            display: block
+        }
+
+        .agenda small {
+            display: block;
+            color: #c5d8eb;
+            font-size: 12px;
+            margin-top: 5px
+        }
+
+        .concept-row {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            padding: 23px 0;
+            border-top: 1px solid var(--line);
+            align-items: start
+        }
+
+        .concept-row h3 {
+            margin: 0
+        }
+
+        .concept-row p {
+            font-size: 20px;
+            line-height: 1.5;
+            color: var(--muted);
+            margin: 0
+        }
+
+        .route-compare {
+            display: grid;
+            gap: 15px
+        }
+
+        .route-panel {
+            background: var(--navy);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 4px
+        }
+
+        .route-panel .mini-label {
+            color: var(--ice);
+            margin-bottom: 17px
+        }
+
+        .network-row {
+            display: flex;
+            align-items: center;
+            gap: 0
+        }
+
+        .node {
+            min-width: 130px;
+            flex: 1;
+            text-align: center;
+            border: 1px solid #668aaf;
+            border-radius: 5px;
+            padding: 16px 9px
+        }
+
+        .node b {
+            font-size: 19px;
+            font-weight: 500;
+            line-height: 1.2
+        }
+
+        .node small {
+            display: block;
+            font-size: 12px;
+            color: #c5d8eb;
+            margin-top: 8px;
+            line-height: 1.4
+        }
+
+        .node.exit {
+            background: var(--ice);
+            color: var(--navy);
+            border-color: var(--ice)
+        }
+
+        .node.exit small {
+            color: #284d70
+        }
+
+        .wire {
+            flex: 0 0 35px;
+            height: 2px;
+            background: #7098bd;
+            position: relative
+        }
+
+        .flowing:before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--ice);
+            position: absolute;
+            top: -3px;
+            animation: packet 1.8s linear infinite
+        }
+
+        .num {
+            font-size: 43px;
+            font-weight: 400;
+            letter-spacing: -2px;
+            color: #4d6e91;
+            display: block;
+            margin-bottom: 20px
+        }
+
+        .option {
+            border-top: 2px solid var(--navy);
+            padding-top: 24px
+        }
+
+        .option h3 {
+            font-size: 29px
+        }
+
+        .option p {
+            font-size: 20px;
+            line-height: 1.5;
+            color: var(--muted)
+        }
+
+        .option .fit {
+            font-size: 17px;
+            border-top: 1px solid var(--line);
+            padding-top: 17px
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 12px;
+            background: var(--navy);
+            color: #fff;
+            font-size: 12px;
+            border-radius: 4px
+        }
+
+        .tag.light {
+            background: var(--soft);
+            color: var(--navy)
+        }
+
+        .steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            counter-reset: steps
+        }
+
+        .steps li {
+            counter-increment: steps;
+            display: grid;
+            grid-template-columns: 33px 1fr;
+            gap: 13px;
+            align-items: start;
+            font-size: 19px;
+            line-height: 1.5;
+            padding: 16px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .steps li:before {
+            content: counter(steps, decimal-leading-zero);
+            font-size: 14px;
+            font-weight: 700;
+            color: #4d6e91;
+            padding-top: 4px
+        }
+
+        .path {
+            background: var(--soft);
+            padding: 18px 22px;
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 22px 0 27px
+        }
+
+        .path span {
+            margin: 0 12px;
+            color: var(--blue)
+        }
+
+        .plan-panel {
+            background: var(--navy);
+            padding: 29px 31px;
+            color: white;
+            border-radius: 4px
+        }
+
+        .plan-panel .mini-label {
+            color: #c5d8eb;
+            max-width: 370px
+        }
+
+        .big-number {
+            font-size: 66px;
+            letter-spacing: -3px;
+            line-height: 1;
+            margin: 25px 0
+        }
+
+        .big-number span {
+            font-size: 19px;
+            letter-spacing: 0;
+            margin-left: 12px;
+            color: #c5d8eb
+        }
+
+        .plan-panel>p:not(.big-number) {
+            font-size: 19px;
+            line-height: 1.5;
+            margin-bottom: 18px
+        }
+
+        .plan-panel>p:last-child {
+            margin-bottom: 0
+        }
+
+        .resource-panel {
+            background: var(--soft);
+            padding: 29px 31px;
+            border-radius: 4px
+        }
+
+        .resource-panel h3 {
+            font-size: 28px
+        }
+
+        .resource-panel p {
+            font-size: 19px;
+            line-height: 1.5;
+            color: var(--muted)
+        }
+
+        .resource-panel .url-caption {
+            font-size: 13px;
+            overflow-wrap: anywhere;
+            margin: 15px 0 0
+        }
+
+        .terminal {
+            background: #122b46;
+            color: #e0ebf7;
+            padding: 28px;
+            border-radius: 4px
+        }
+
+        .terminal .mini-label {
+            color: #b9cfe4
+        }
+
+        .command {
+            font: 30px/1.6 Consolas, monospace;
+            color: var(--ice);
+            margin: 20px 0
+        }
+
+        .terminal-button {
+            font-size: 12px;
+            color: #fff;
+            border-color: #6b90b5;
+            padding: 8px 13px
+        }
+
+        .terminal-button:hover:not(:disabled) {
+            background: #20517f
+        }
+
+        .terminal-rule {
+            border-top: 1px solid #42688e;
+            margin: 25px 0 20px
+        }
+
+        .terminal>p:not(.mini-label) {
+            font-size: 17px;
+            line-height: 1.5;
+            margin-bottom: 13px
+        }
+
+        .terminal small {
+            font-size: 13px;
+            color: #c5d8eb;
+            line-height: 1.6;
+            display: block;
+            margin-top: 20px
+        }
+
+        .wide-steps {
+            list-style: none;
+            margin: 0;
+            padding: 0
+        }
+
+        .wide-steps li {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 21px;
+            padding: 20px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .wide-steps li>span {
+            font-size: 32px;
+            color: #4d6e91;
+            letter-spacing: -1px
+        }
+
+        .wide-steps h3 {
+            margin-bottom: 8px
+        }
+
+        .wide-steps p {
+            font-size: 19px;
+            line-height: 1.5;
+            color: var(--muted);
+            margin: 0;
+            max-width: 1000px
+        }
+
+        .table-wrap {
+            overflow-x: auto
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th,
+        td {
+            padding: 17px 17px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            font-size: 18px;
+            line-height: 1.45;
+            vertical-align: top
+        }
+
+        th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            border-top: 1px solid var(--line)
+        }
+
+        td:first-child {
+            font-weight: 700;
+            width: 24%
+        }
+
+        .after-table {
+            margin-top: 27px
+        }
+
+        .after-table h3 {
+            font-size: 21px
+        }
+
+        .after-table p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: var(--muted);
+            margin: 0
+        }
+
+        .summary-lines p {
+            font-size: clamp(25px, 2.6vw, 39px);
+            line-height: 1.3;
+            letter-spacing: -.8px;
+            border-top: 1px solid var(--line);
+            padding: 21px 0;
+            margin: 0
+        }
+
+        .summary-lines p span {
+            color: var(--muted)
+        }
+
+        .thanks-slide {
+            padding-top: 70px
+        }
+
+        .thanks-slide h2 {
+            font-size: clamp(46px, 6vw, 88px);
+            max-width: 1000px;
+            letter-spacing: -.055em
+        }
+
+        .thanks {
+            margin-top: 38px
+        }
+
+        .thanks-line {
+            height: 3px;
+            width: 100px;
+            background: var(--blue);
+            margin-bottom: 32px
+        }
+
+        .thanks p {
+            font-size: 29px;
+            margin-bottom: 14px
+        }
+
+        .thanks span {
+            font-size: 19px;
+            color: var(--muted)
+        }
+
+        .thanks-slide .actions {
+            margin-top: 35px
+        }
+
+        .apa-list {
+            list-style: none;
+            padding: 0;
+            margin: 0
+        }
+
+        .apa-list li {
+            font-size: 18px;
+            line-height: 1.5;
+            border-top: 1px solid var(--line);
+            padding: 17px 0 17px 26px;
+            text-indent: -26px
+        }
+
+        .apa-list a {
+            display: block;
+            text-indent: 0;
+            overflow-wrap: anywhere;
+            font-size: 15px;
+            margin-top: 5px
+        }
+
+        .reference-note {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin: 16px 0 0
+        }
+
+        .footer {
+            height: 75px;
+            position: fixed;
+            bottom: 0;
+            left: var(--gutter);
+            right: var(--gutter);
+            border-top: 1px solid var(--line);
+            background: var(--paper);
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            z-index: 20
+        }
+
+        .slide-count {
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+            min-width: 47px
+        }
+
+        .progress {
+            height: 3px;
+            background: var(--line);
+            flex: 1;
+            overflow: hidden
+        }
+
+        .progress div {
+            height: 100%;
+            background: #4d87c0;
+            width: 0;
+            transition: width .3s
+        }
+
+        .footer-label {
+            font-size: 11px;
+            color: var(--muted);
+            max-width: 340px
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px
+        }
+
+        .nav-buttons button {
+            font-size: 20px;
+            width: 42px;
+            height: 42px;
+            padding: 0
+        }
+
+        dialog {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--paper);
+            color: var(--ink);
+            width: min(870px, 93vw);
+            max-height: 85svh;
+            padding: 26px;
+            box-shadow: 0 18px 60px #102a4514
+        }
+
+        dialog::backdrop {
+            background: #122a46a0;
+            backdrop-filter: blur(4px)
+        }
+
+        .dialog-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 21px;
+            gap: 20px
+        }
+
+        .dialog-head h2 {
+            font-size: 28px;
+            margin: 0
+        }
+
+        .dialog-head button {
+            font-size: 13px
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 22px
+        }
+
+        .index-grid button {
+            display: flex;
+            gap: 13px;
+            border: 0;
+            border-top: 1px solid var(--line);
+            padding: 13px 8px;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 0;
+            line-height: 1.4
+        }
+
+        .index-grid button span {
+            color: #416d99
+        }
+
+        .index-grid button[aria-current=true] {
+            background: var(--ice)
+        }
+
+        .index-help {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin: 18px 0 0
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 90px;
+            transform: translateX(-50%);
+            background: var(--navy);
+            color: #fff;
+            padding: 13px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 100;
+            max-width: 90vw;
+            text-align: center
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0)
+        }
+
+        .no-motion *,
+        .no-motion *:before {
+            animation: none !important;
+            transition: none !important
+        }
+
+        @media(max-height:780px) and (min-width:1000px) {
+            header {
+                height: 62px
+            }
+
+            .part-nav {
+                min-height: 43px
+            }
+
+            .part-nav button {
+                padding: 11px 0 10px
+            }
+
+            .slide {
+                padding-top: 25px;
+                min-height: calc(100svh - 190px)
+            }
+
+            h1 {
+                font-size: 65px
+            }
+
+            h2 {
+                font-size: 40px;
+                margin-bottom: 17px
+            }
+
+            .eyebrow {
+                margin-bottom: 13px
+            }
+
+            .lead {
+                font-size: 19px;
+                margin-bottom: 21px
+            }
+
+            .takeaway {
+                font-size: 18px;
+                margin-top: 22px;
+                padding-top: 18px
+            }
+
+            .steps li {
+                font-size: 18px;
+                padding: 13px 0
+            }
+
+            .rule-col {
+                padding-top: 20px
+            }
+
+            .rule-col p {
+                font-size: 18px
+            }
+
+            .footer {
+                height: 65px
+            }
+
+            .cover.active {
+                padding-top: 29px
+            }
+
+            .hero-network {
+                padding: 22px 28px
+            }
+
+            .country-pair {
+                margin: 19px 0
+            }
+
+            .agenda button {
+                padding: 12px 0
+            }
+
+            .concept-row {
+                padding: 18px 0
+            }
+
+            .concept-row p {
+                font-size: 19px
+            }
+
+            .route-panel {
+                padding: 16px 23px
+            }
+
+            .route-panel .mini-label {
+                margin-bottom: 13px
+            }
+
+            .node {
+                padding: 13px 8px
+            }
+
+            .node b {
+                font-size: 17px
+            }
+
+            .wide-steps li {
+                padding: 16px 0
+            }
+
+            .wide-steps p {
+                font-size: 18px
+            }
+
+            .callout {
+                margin-top: 20px;
+                font-size: 15px;
+                padding: 13px 18px
+            }
+
+            td {
+                font-size: 17px;
+                padding: 13px 15px
+            }
+
+            .after-table {
+                margin-top: 20px
+            }
+
+            .after-table p {
+                font-size: 16px
+            }
+
+            .apa-list li {
+                font-size: 17px;
+                padding-top: 14px;
+                padding-bottom: 14px
+            }
+
+            .apa-list a {
+                font-size: 14px
+            }
+
+            .thanks-slide {
+                padding-top: 45px
+            }
+        }
+
+        @media(max-width:1050px) {
+            .brand span {
+                display: none
+            }
+
+            .two-col {
+                gap: 28px
+            }
+
+            .cover.active {
+                gap: 30px
+            }
+
+            .hero-network {
+                padding: 25px
+            }
+
+            .node {
+                min-width: 105px
+            }
+
+            .wire {
+                flex-basis: 22px
+            }
+
+            .node b {
+                font-size: 16px
+            }
+
+            .node small {
+                font-size: 11px
+            }
+
+            .footer-label {
+                display: none
+            }
+        }
+
+        @media(max-width:800px) {
+            header {
+                height: 67px
+            }
+
+            .top-actions button {
+                padding: 8px 11px
+            }
+
+            .top-actions #motionBtn {
+                display: none
+            }
+
+            .part-nav {
+                gap: 20px;
+                justify-content: space-between
+            }
+
+            .part-nav button {
+                font-size: 11px
+            }
+
+            .slide {
+                padding-top: 27px
+            }
+
+            .cover.active {
+                grid-template-columns: 1fr;
+                gap: 27px
+            }
+
+            .cover .lead {
+                max-width: 650px
+            }
+
+            h1 {
+                font-size: clamp(47px, 9vw, 72px)
+            }
+
+            h2 {
+                font-size: 34px
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+                gap: 22px
+            }
+
+            .concept-row {
+                grid-template-columns: 1fr;
+                gap: 9px;
+                padding: 19px 0
+            }
+
+            .concept-row p {
+                font-size: 18px
+            }
+
+            .big-statement p {
+                font-size: 30px
+            }
+
+            .index-grid {
+                grid-template-columns: 1fr
+            }
+
+            .node {
+                min-width: 80px
+            }
+
+            .node b {
+                font-size: 14px
+            }
+
+            .node small {
+                font-size: 10px
+            }
+
+            .wire {
+                flex-basis: 18px
+            }
+
+            .route-panel {
+                padding: 20px
+            }
+
+            .thanks-slide {
+                padding-top: 45px
+            }
+
+            .apa-list li {
+                font-size: 17px
+            }
+
+            .apa-list a {
+                font-size: 14px
+            }
+
+            .plan-panel .big-number {
+                font-size: 58px
+            }
+
+            .path {
+                font-size: 16px
+            }
+
+            .path span {
+                margin: 0 5px
+            }
+
+            .after-table p {
+                font-size: 17px
+            }
+
+            .summary-lines p {
+                font-size: 29px
+            }
+        }
+
+        @media(max-width:500px) {
+            .brand {
+                font-size: 18px
+            }
+
+            .top-actions {
+                gap: 6px
+            }
+
+            .top-actions button {
+                font-size: 11px
+            }
+
+            .top-actions #fullBtn {
+                max-width: 105px;
+                padding: 7px 10px
+            }
+
+            .part-nav {
+                gap: 10px
+            }
+
+            .part-nav button {
+                font-size: 10px;
+                letter-spacing: 0
+            }
+
+            .slide {
+                padding-top: 25px
+            }
+
+            h2 {
+                font-size: 31px
+            }
+
+            .lead {
+                font-size: 18px
+            }
+
+            .cover.active {
+                padding-top: 28px
+            }
+
+            .hero-network {
+                padding: 23px
+            }
+
+            .country-pair b {
+                font-size: 52px
+            }
+
+            .network-row {
+                flex-direction: column
+            }
+
+            .node {
+                width: 100%;
+                padding: 12px
+            }
+
+            .node b {
+                font-size: 18px
+            }
+
+            .node small {
+                font-size: 12px
+            }
+
+            .wire {
+                width: 2px;
+                height: 20px;
+                flex: 0 0 20px
+            }
+
+            .flowing:before {
+                left: -2px;
+                top: 0;
+                animation: packet-vertical 1.8s linear infinite
+            }
+
+            @keyframes packet-vertical {
+                from {
+                    top: 0
+                }
+
+                to {
+                    top: calc(100% - 7px)
+                }
+            }
+
+            .steps li {
+                font-size: 17px;
+                padding: 14px 0
+            }
+
+            .rule-col p,
+            .plain-list,
+            .body-text {
+                font-size: 18px
+            }
+
+            .big-statement {
+                padding: 23px
+            }
+
+            .takeaway {
+                font-size: 18px
+            }
+
+            .wide-steps li {
+                grid-template-columns: 35px 1fr;
+                gap: 14px
+            }
+
+            .wide-steps h3 {
+                font-size: 21px
+            }
+
+            .wide-steps p {
+                font-size: 17px
+            }
+
+            .wide-steps li>span {
+                font-size: 27px
+            }
+
+            .terminal {
+                padding: 23px
+            }
+
+            .command {
+                font-size: 27px
+            }
+
+            .option h3 {
+                font-size: 26px
+            }
+
+            .option p {
+                font-size: 18px
+            }
+
+            .footer {
+                gap: 16px;
+                height: 70px
+            }
+
+            .nav-buttons button {
+                width: 38px;
+                height: 38px
+            }
+
+            th,
+            td {
+                padding: 12px 10px;
+                font-size: 14px
+            }
+
+            th {
+                font-size: 9px
+            }
+
+            .apa-list li {
+                font-size: 16px;
+                padding-left: 18px;
+                text-indent: -18px
+            }
+
+            .apa-list a {
+                font-size: 13px
+            }
+
+            .references h2 {
+                font-size: 30px
+            }
+
+            .thanks-slide h2 {
+                font-size: 49px
+            }
+
+            .thanks p {
+                font-size: 26px
+            }
+
+            .thanks span {
+                font-size: 17px
+            }
+
+            .resource-panel {
+                padding: 24px
+            }
+
+            .resource-panel p {
+                font-size: 18px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+        }
+
+        @media print {
+
+            header,
+            .part-nav,
+            .footer,
+            dialog,
+            .toast,
+            .actions,
+            .button,
+            button {
+                display: none !important
+            }
+
+            main {
+                padding: 0
+            }
+
+            .slide,
+            .slide.active,
+            .cover.active {
+                display: block !important;
+                page-break-after: always;
+                min-height: 0;
+                padding: 22px !important;
+                break-inside: avoid
+            }
+
+            .slide>* {
+                animation: none !important
+            }
+
+            body {
+                background: white
+            }
+
+            .two-col {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .hero-network {
+                max-width: 540px;
+                margin-top: 30px
+            }
+
+            a {
+                color: var(--ink)
+            }
+
+            .references {
+                page-break-after: auto
+            }
+        }
+
+        figure {
+            margin: 0
+        }
+
+        .network-art {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible
+        }
+
+        .visual-frame {
+            min-width: 0;
+            padding: 19px 19px 18px;
+            background: var(--soft);
+            border: 1px solid #dce7f2;
+            border-radius: 8px
+        }
+
+        .visual-frame figcaption {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--muted);
+            margin: 10px 4px 0
+        }
+
+        .hero-art {
+            margin: 16px 0 4px
+        }
+
+        .hero-art .network-art {
+            max-height: 195px
+        }
+
+        .art-flow {
+            animation: artFlow 4s linear infinite
+        }
+
+        @keyframes artFlow {
+            to {
+                stroke-dashoffset: -105
+            }
+        }
+
+        .concept-heading {
+            display: flex;
+            align-items: center;
+            gap: 16px
+        }
+
+        .concept-heading svg {
+            width: 43px;
+            height: 40px;
+            flex: none
+        }
+
+        .concept-heading span {
+            line-height: 1.18
+        }
+
+        .concept-row {
+            grid-template-columns: 285px 1fr
+        }
+
+        .node-icon {
+            display: block;
+            width: 36px;
+            height: 32px;
+            margin: 0 auto 7px;
+            color: #c5d8eb
+        }
+
+        .node.exit .node-icon {
+            color: var(--navy)
+        }
+
+        .option-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px
+        }
+
+        .option-heading .num {
+            margin: 0
+        }
+
+        .option-heading svg {
+            width: 48px;
+            height: 45px
+        }
+
+        .manual-figure {
+            padding: 10px 12px 13px
+        }
+
+        .manual-figure figcaption {
+            font-size: 13px;
+            margin-top: 3px
+        }
+
+        .connection-layout .wide-steps li {
+            grid-template-columns: 34px 1fr;
+            gap: 13px;
+            padding: 16px 0
+        }
+
+        .connection-layout .wide-steps h3 {
+            font-size: 21px
+        }
+
+        .connection-layout .wide-steps p {
+            font-size: 18px
+        }
+
+        .connection-layout .wide-steps li>span {
+            font-size: 27px
+        }
+
+        .connection-layout .visual-frame {
+            margin-top: 0
+        }
+
+        .resource-panel .network-art {
+            margin: 4px 0 18px
+        }
+
+        .resource-panel .art-explanation {
+            font-size: 17px;
+            margin: 0 0 19px
+        }
+
+        .visual-sources-intro {
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--muted);
+            max-width: 1080px;
+            margin: 0 0 18px
+        }
+
+        .source-scope {
+            display: block;
+            text-indent: 0;
+            font-size: 13px;
+            color: var(--muted);
+            margin: 7px 0 0;
+            line-height: 1.5
+        }
+
+        @media(max-height:780px) and (min-width:1000px) {
+            .hero-art {
+                margin: 9px 0 0
+            }
+
+            .hero-art .network-art {
+                max-height: 155px
+            }
+
+            .visual-frame {
+                padding: 14px
+            }
+
+            .visual-frame .network-art {
+                max-height: 235px
+            }
+
+            .visual-frame figcaption {
+                font-size: 14px;
+                margin-top: 8px
+            }
+
+            .manual-figure {
+                padding: 8px 10px
+            }
+
+            .manual-figure .network-art {
+                max-height: 218px
+            }
+
+            .manual-figure figcaption {
+                font-size: 12px
+            }
+
+            .node-icon {
+                width: 29px;
+                height: 26px;
+                margin-bottom: 5px
+            }
+
+            .node {
+                padding: 10px 8px
+            }
+
+            .node small {
+                margin-top: 5px
+            }
+
+            .route-panel .mini-label {
+                margin-bottom: 10px
+            }
+
+            .route-panel {
+                padding: 14px 23px
+            }
+
+            .option-heading {
+                margin-bottom: 16px
+            }
+
+            .connection-layout .wide-steps li {
+                padding: 13px 0
+            }
+
+            .connection-layout .wide-steps h3 {
+                font-size: 20px
+            }
+
+            .connection-layout .wide-steps p {
+                font-size: 17px
+            }
+
+            .connection-layout .visual-frame .network-art {
+                max-height: 270px
+            }
+
+            .visual-sources-intro {
+                font-size: 16px
+            }
+
+            .source-scope {
+                font-size: 12px
+            }
+
+            .references .apa-list li {
+                padding-top: 12px;
+                padding-bottom: 12px
+            }
+        }
+
+        @media(max-width:1050px) {
+            .concept-row {
+                grid-template-columns: 250px 1fr
+            }
+        }
+
+        @media(max-width:800px) {
+            .concept-row {
+                grid-template-columns: 1fr
+            }
+
+            .concept-heading svg {
+                width: 36px;
+                height: 33px
+            }
+
+            .visual-frame {
+                max-width: 610px;
+                width: 100%;
+                justify-self: center
+            }
+
+            .hero-art .network-art {
+                max-height: 200px
+            }
+
+            .connection-layout .visual-frame .network-art {
+                max-height: 310px
+            }
+
+            .resource-panel .network-art {
+                max-height: 190px
+            }
+
+            .node-icon {
+                width: 31px;
+                height: 28px
+            }
+        }
+
+        @media(max-width:500px) {
+            .visual-frame {
+                padding: 12px
+            }
+
+            .visual-frame figcaption {
+                font-size: 13px;
+                margin-top: 7px
+            }
+
+            .hero-art {
+                margin: 10px -9px 0
+            }
+
+            .hero-art .network-art {
+                max-height: 170px
+            }
+
+            .concept-heading {
+                gap: 12px
+            }
+
+            .concept-heading svg {
+                width: 31px;
+                height: 29px
+            }
+
+            .node-icon {
+                display: inline-block;
+                vertical-align: middle;
+                margin: 0 9px 0 0;
+                width: 29px;
+                height: 26px
+            }
+
+            .node small {
+                margin-top: 5px
+            }
+
+            .option-heading {
+                margin-bottom: 15px
+            }
+
+            .manual-figure {
+                padding: 7px
+            }
+
+            .manual-figure .network-art {
+                min-width: 0
+            }
+
+            .manual-figure figcaption {
+                font-size: 12px
+            }
+
+            .connection-layout .wide-steps p {
+                font-size: 17px
+            }
+
+            .resource-panel .art-explanation {
+                font-size: 16px
+            }
+
+            .visual-sources-intro {
+                font-size: 16px
+            }
+
+            .source-scope {
+                font-size: 12px
+            }
+        }
+
+        @media print {
+            .visual-frame {
+                break-inside: avoid
+            }
+
+            .network-art {
+                max-height: 240px
+            }
+
+            .art-flow {
+                animation: none
+            }
+        }
+
+        .cover .eyebrow {
+            letter-spacing: 1.15px
+        }
+
+        .team-list {
+            list-style: none;
+            margin: 13px 0 0;
+            padding: 0
+        }
+
+        .team-list li {
+            position: relative;
+            padding: 12px 0 12px 18px;
+            border-top: 1px solid #42688e;
+            line-height: 1.35
+        }
+
+        .team-list li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 21px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--ice)
+        }
+
+        .team-list strong {
+            display: block;
+            font-size: 18px;
+            font-weight: 500
+        }
+
+        .team-list li>span {
+            display: block;
+            font-size: 13px;
+            color: #c5d8eb;
+            margin-top: 4px;
+            font-variant-numeric: tabular-nums
+        }
+
+        .cover .agenda {
+            display: flex;
+            gap: 10px;
+            margin-top: 9px;
+            padding-top: 11px
+        }
+
+        .cover .agenda button {
+            width: auto;
+            flex: 1;
+            gap: 8px;
+            padding: 9px 0;
+            align-items: center
+        }
+
+        .cover .agenda b {
+            font-size: 14px
+        }
+
+        .cover .agenda button>span {
+            font-size: 11px
+        }
+
+        .cover .hero-art .network-art {
+            max-height: 150px
+        }
+
+        @media(max-height:780px) and (min-width:1000px) {
+            .cover h1 {
+                font-size: 56px;
+                margin-bottom: 18px
+            }
+
+            .cover .lead {
+                font-size: 18px;
+                line-height: 1.4;
+                margin-bottom: 14px
+            }
+
+            .cover-context {
+                font-size: 13px
+            }
+
+            .cover .actions {
+                margin-top: 19px
+            }
+
+            .cover .actions button {
+                font-size: 14px
+            }
+
+            .cover .hero-network {
+                padding: 20px 27px
+            }
+
+            .cover .hero-network>.eyebrow {
+                margin-bottom: 9px
+            }
+
+            .cover .hero-art {
+                margin-top: 0
+            }
+
+            .cover .hero-art .network-art {
+                max-height: 105px
+            }
+
+            .team-list {
+                margin-top: 7px
+            }
+
+            .team-list li {
+                padding-top: 9px;
+                padding-bottom: 9px
+            }
+
+            .team-list li:before {
+                top: 17px
+            }
+
+            .team-list strong {
+                font-size: 17px
+            }
+
+            .team-list li>span {
+                font-size: 12px;
+                margin-top: 3px
+            }
+
+            .cover .agenda {
+                margin-top: 8px;
+                padding-top: 8px
+            }
+
+            .cover .agenda button {
+                padding: 8px 0
+            }
+
+            .cover .agenda b {
+                font-size: 13px
+            }
+        }
+
+        @media(max-width:800px) {
+            .cover .hero-art .network-art {
+                max-height: 165px
+            }
+
+            .cover .hero-network {
+                width: 100%
+            }
+
+            .team-list strong {
+                font-size: 18px
+            }
+        }
+
+        @media(max-width:500px) {
+            .cover .hero-network {
+                padding: 22px
+            }
+
+            .cover .hero-art .network-art {
+                max-height: 145px
+            }
+
+            .team-list strong {
+                font-size: 16px
+            }
+
+            .team-list li>span {
+                font-size: 12px
+            }
+
+            .cover .agenda {
+                gap: 7px;
+                flex-wrap: wrap
+            }
+
+            .cover .agenda button {
+                flex: 0 1 auto;
+                gap: 6px;
+                padding: 9px 5px 8px 0
+            }
+
+            .cover .agenda b {
+                font-size: 12px
+            }
+
+            .cover .agenda button>span {
+                font-size: 10px
+            }
+
+            .cover .eyebrow {
+                font-size: 10px;
+                letter-spacing: 1px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header><a class="brand" href="#portada">RED LAB<span>PC · VPN · Netflix</span></a>
+        <nav class="top-actions" aria-label="Herramientas de presentación"><button id="indexBtn"
+                title="Índice (I)">Índice</button><button id="motionBtn" aria-pressed="true">Animación:
+                sí</button><button id="fullBtn" title="Pantalla completa (F)">Pantalla completa</button></nav>
+    </header>
+    <nav class="part-nav" aria-label="Partes de la exposición"><button data-go="introduccion" data-part="1">01 ·
+            Introducción · Integrante 1</button><button data-go="opciones" data-part="2">02 · Opciones · Integrante
+            2</button><button data-go="practica" data-part="3">03 · Práctica · Integrante 3</button></nav>
+    <main id="deck">
+        <section class="slide active cover" id="portada" data-part="0" data-title="Netflix y VPN desde una computadora"
+            aria-labelledby="h-portada">
+            <div class="hero-copy">
+                <p class="eyebrow">Conmutación y Enrutamiento de Redes - Exposición</p>
+                <h1 id="h-portada">Netflix desde<br><span class="blue">México</span><br>y el uso de VPN</h1>
+                <p class="lead">Cómo configurar una conexión VPN en la computadora y comprobar su salida a internet.</p>
+                <p class="cover-context">Caso de estudio: conexión de izzi en México y un servidor VPN en Estados
+                    Unidos.</p>
+                <div class="actions"><button class="primary" data-go="introduccion">Comenzar presentación
+                        ↗</button><button data-go="practica">Ir a la práctica</button></div>
+            </div>
+            <div class="hero-network">
+                <p class="eyebrow">Integrantes del equipo</p>
+                <div class="hero-art"><svg xmlns="http://www.w3.org/2000/svg" class="network-art"
+                        data-art="salida-mx-us" viewBox="0 0 520 190" role="img"
+                        aria-label="Computadora en México conectada a un servidor VPN en Estados Unidos">
+                        <title>Computadora en México conectada a un servidor VPN en Estados Unidos</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <path d="M98 71C175 8 320 8 402 71" fill="none" stroke="#6089b1" stroke-width="2" />
+                            <path class="art-flow" d="M98 71C175 8 320 8 402 71" fill="none" stroke="#b9ddfa"
+                                stroke-width="3" stroke-dasharray="7 20" />
+                            <g transform="translate(31 51) scale(1)" fill="none" stroke="#dbeeff" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="6" width="70" height="46" rx="5" />
+                                <path d="M0 60h80l-7 6H7z" />
+                                <path d="M32 60h16" />
+                            </g>
+                            <g transform="translate(386 48) scale(1)" fill="none" stroke="#dbeeff" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="12" y="2" width="56" height="66" rx="6" />
+                                <path d="M12 24h56M12 46h56" />
+                                <path d="M23 13h1M23 35h1M23 57h1" stroke-width="5" />
+                                <path d="M37 13h19M37 35h19M37 57h19" />
+                            </g>
+                            <g transform="translate(225 25) scale(0.58)" fill="none" stroke="#b9ddfa" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="16" y="28" width="48" height="36" rx="6" />
+                                <path d="M26 28V17a14 14 0 0 1 28 0v11M40 42v9" />
+                            </g><text x="72" y="150" fill="#ffffff" font-size="19" font-weight="700"
+                                text-anchor="middle">MÉXICO</text><text x="72" y="174" fill="#c5d8eb" font-size="14"
+                                font-weight="400" text-anchor="middle">Tu computadora</text><text x="426" y="150"
+                                fill="#ffffff" font-size="19" font-weight="700" text-anchor="middle">EE. UU.</text><text
+                                x="426" y="174" fill="#c5d8eb" font-size="14" font-weight="400"
+                                text-anchor="middle">Salida VPN</text><text x="252" y="113" fill="#c5d8eb"
+                                font-size="15" font-weight="400" text-anchor="middle">Túnel cifrado</text>
+                        </g>
+                    </svg></div>
+                <ul class="team-list" aria-label="Lista de integrantes">
+                    <li><strong>Derick Eduardo Blanco Oviedo</strong><span>Matrícula: 23481431</span></li>
+                    <li><strong>Jared Alexis Pérez Calixto</strong><span>Matrícula: 23480802</span></li>
+                    <li><strong>Daniel Cariaga Delgado</strong><span>Matrícula: 22480788</span></li>
+                </ul>
+                <div class="agenda" aria-label="Partes de la exposición"><button data-go="introduccion"><span>01</span>
+                        <div><b>Introducción</b></div>
+                    </button><button data-go="opciones"><span>02</span>
+                        <div><b>Dos opciones</b></div>
+                    </button><button data-go="practica"><span>03</span>
+                        <div><b>Práctica real</b></div>
+                    </button></div>
+            </div>
+        </section>
+        <section class="slide " id="introduccion" data-part="1" data-title="Qué vamos a configurar"
+            aria-labelledby="h-introduccion">
+            <p class="eyebrow">Parte 1 · Integrante 1 · Introducción</p>
+            <h2 id="h-introduccion">Qué vamos a configurar</h2>
+            <p class="lead">Buscamos entender cómo cambia el recorrido de los datos cuando elegimos una salida en
+                Estados Unidos.</p>
+            <div class="two-col">
+                <div class="rule-col">
+                    <h3>Una conexión VPN en la PC</h3>
+                    <p>La computadora se conecta a un servidor remoto mediante un túnel cifrado. El tráfico incluido en
+                        la VPN puede salir a internet desde ese servidor.</p>
+                    <p>El proveedor, como izzi, sigue dando acceso a internet y transporta la conexión hasta la VPN.</p>
+                </div>
+                <figure class="visual-frame "><svg xmlns="http://www.w3.org/2000/svg" class="network-art"
+                        data-art="tunel-vpn" viewBox="0 0 520 230" role="img"
+                        aria-label="El túnel cifrado pasa por el proveedor de internet y termina en el servidor VPN">
+                        <title>El túnel cifrado pasa por el proveedor de internet y termina en el servidor VPN</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <rect x="24" y="38" width="472" height="117" rx="58" fill="#deecf8" />
+                            <path d="M88 97h348" stroke="#a5c3df" stroke-width="2" />
+                            <path class="art-flow" d="M88 97h348" stroke="#286db4" stroke-width="3"
+                                stroke-dasharray="6 15" />
+                            <circle cx="72" cy="96" r="45" fill="#f7f9fc" />
+                            <circle cx="260" cy="96" r="45" fill="#f7f9fc" />
+                            <circle cx="448" cy="96" r="45" fill="#133b63" />
+                            <g transform="translate(41 69) scale(0.77)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="6" width="70" height="46" rx="5" />
+                                <path d="M0 60h80l-7 6H7z" />
+                                <path d="M32 60h16" />
+                            </g>
+                            <g transform="translate(229 69) scale(0.77)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="6" y="28" width="68" height="30" rx="6" />
+                                <path d="M19 28V6m42 22V6M18 43h1m13 0h1m13 0h13" />
+                                <path d="M10 64h60" />
+                            </g>
+                            <g transform="translate(417 69) scale(0.77)" fill="none" stroke="#dbeeff" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="12" y="2" width="56" height="66" rx="6" />
+                                <path d="M12 24h56M12 46h56" />
+                                <path d="M23 13h1M23 35h1M23 57h1" stroke-width="5" />
+                                <path d="M37 13h19M37 35h19M37 57h19" />
+                            </g><text x="260" y="24" fill="#286db4" font-size="13" font-weight="700"
+                                text-anchor="middle">TÚNEL CIFRADO</text><text x="72" y="183" fill="#152b46"
+                                font-size="20" font-weight="700" text-anchor="middle">Tu PC</text><text x="260" y="183"
+                                fill="#152b46" font-size="20" font-weight="700" text-anchor="middle">izzi</text><text
+                                x="448" y="183" fill="#152b46" font-size="20" font-weight="700"
+                                text-anchor="middle">VPN</text><text x="72" y="209" fill="#56687e" font-size="15"
+                                font-weight="400" text-anchor="middle">Origen</text><text x="260" y="209" fill="#56687e"
+                                font-size="15" font-weight="400" text-anchor="middle">Transporta</text><text x="448"
+                                y="209" fill="#56687e" font-size="15" font-weight="400" text-anchor="middle">Nueva
+                                salida</text>
+                        </g>
+                    </svg>
+                    <figcaption>Objetivo: observar una IP pública diferente y comprobar el país que identifica una
+                        página web.</figcaption>
+                </figure>
+            </div>
+            <p class="takeaway">La configuración se hace en una sola computadora conectada a internet.</p>
+        </section>
+        <section class="slide " id="conceptos" data-part="1" data-title="La red local y la salida a internet"
+            aria-labelledby="h-conceptos">
+            <p class="eyebrow">Parte 1 · Integrante 1 · Introducción</p>
+            <h2 id="h-conceptos">La red local y la salida a internet</h2>
+            <p class="lead">Estas direcciones cumplen funciones distintas. La comprobación de la práctica se centra en
+                la salida pública.</p>
+            <div class="concepts">
+                <div class="concept-row">
+                    <h3 class="concept-heading"><svg viewBox="0 0 80 72" aria-hidden="true">
+                            <g transform="translate(0 0) scale(1)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="6" width="70" height="46" rx="5" />
+                                <path d="M0 60h80l-7 6H7z" />
+                                <path d="M32 60h16" />
+                            </g>
+                        </svg><span>IP local</span></h3>
+                    <p>Identifica la computadora dentro de la red a la que está conectada. Un ejemplo privado es
+                        <code>192.168.1.20</code>.</p>
+                </div>
+                <div class="concept-row">
+                    <h3 class="concept-heading"><svg viewBox="0 0 80 72" aria-hidden="true">
+                            <g transform="translate(0 0) scale(1)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="6" y="28" width="68" height="30" rx="6" />
+                                <path d="M19 28V6m42 22V6M18 43h1m13 0h1m13 0h13" />
+                                <path d="M10 64h60" />
+                            </g>
+                        </svg><span>Puerta de enlace</span></h3>
+                    <p>Es el siguiente equipo al que la PC envía tráfico destinado a otras redes. Se puede consultar con
+                        <code>ipconfig</code>.</p>
+                </div>
+                <div class="concept-row">
+                    <h3 class="concept-heading"><svg viewBox="0 0 80 72" aria-hidden="true">
+                            <g transform="translate(0 0) scale(1)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="40" cy="35" r="30" />
+                                <ellipse cx="40" cy="35" rx="13" ry="30" />
+                                <path d="M10 35h60M16 18h48M16 52h48" />
+                            </g>
+                        </svg><span>IP pública de salida</span></h3>
+                    <p>Es la dirección que observa el sitio web al recibir nuestra conexión. Con una VPN, puede ser la
+                        del servidor elegido.</p>
+                </div>
+            </div>
+            <p class="takeaway">La IP local del Wi-Fi puede permanecer igual mientras cambia la IP pública observada en
+                internet.</p>
+        </section>
+        <section class="slide " id="recorrido" data-part="1" data-title="Cómo cambia el recorrido de los datos"
+            aria-labelledby="h-recorrido">
+            <p class="eyebrow">Parte 1 · Integrante 1 · Introducción</p>
+            <h2 id="h-recorrido">Cómo cambia el recorrido de los datos</h2>
+            <p class="lead">El servidor elegido actúa como punto de salida para el tráfico que pasa por la VPN.</p>
+            <div class="route-compare">
+                <div class="route-panel">
+                    <p class="mini-label">Conexión habitual</p>
+                    <div class="network-row">
+                        <div class="node"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="5" y="6" width="70" height="46" rx="5" />
+                                    <path d="M0 60h80l-7 6H7z" />
+                                    <path d="M32 60h16" />
+                                </g>
+                            </svg><b>Computadora</b><small>Red local</small></div>
+                        <div class="wire"></div>
+                        <div class="node exit"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="6" y="28" width="68" height="30" rx="6" />
+                                    <path d="M19 28V6m42 22V6M18 43h1m13 0h1m13 0h13" />
+                                    <path d="M10 64h60" />
+                                </g>
+                            </svg><b>izzi · México</b><small>Salida habitual</small></div>
+                        <div class="wire"></div>
+                        <div class="node"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="40" cy="35" r="30" />
+                                    <ellipse cx="40" cy="35" rx="13" ry="30" />
+                                    <path d="M10 35h60M16 18h48M16 52h48" />
+                                </g>
+                            </svg><b>Sitio web</b><small>Recibe la conexión</small></div>
+                    </div>
+                </div>
+                <div class="route-panel">
+                    <p class="mini-label">Conexión con VPN · Esquema conceptual</p>
+                    <div class="network-row">
+                        <div class="node"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="5" y="6" width="70" height="46" rx="5" />
+                                    <path d="M0 60h80l-7 6H7z" />
+                                    <path d="M32 60h16" />
+                                </g>
+                            </svg><b>Computadora</b><small>Inicia el túnel</small></div>
+                        <div class="wire flowing"></div>
+                        <div class="node"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="6" y="28" width="68" height="30" rx="6" />
+                                    <path d="M19 28V6m42 22V6M18 43h1m13 0h1m13 0h13" />
+                                    <path d="M10 64h60" />
+                                </g>
+                            </svg><b>izzi</b><small>Transporta el túnel</small></div>
+                        <div class="wire flowing"></div>
+                        <div class="node exit"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="12" y="2" width="56" height="66" rx="6" />
+                                    <path d="M12 24h56M12 46h56" />
+                                    <path d="M23 13h1M23 35h1M23 57h1" stroke-width="5" />
+                                    <path d="M37 13h19M37 35h19M37 57h19" />
+                                </g>
+                            </svg><b>VPN · EE. UU.</b><small>Salida pública</small></div>
+                        <div class="wire flowing"></div>
+                        <div class="node"><svg class="node-icon" viewBox="0 0 80 72" aria-hidden="true">
+                                <g transform="translate(0 0) scale(1)" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="40" cy="35" r="30" />
+                                    <ellipse cx="40" cy="35" rx="13" ry="30" />
+                                    <path d="M10 35h60M16 18h48M16 52h48" />
+                                </g>
+                            </svg><b>Sitio web</b><small>Ve esa salida</small></div>
+                    </div>
+                </div>
+            </div>
+            <p class="takeaway">El túnel de la VPN llega hasta su servidor. La computadora sigue físicamente en México.
+            </p>
+        </section>
+        <section class="slide " id="limites" data-part="1" data-title="Qué significa esto para Netflix"
+            aria-labelledby="h-limites">
+            <p class="eyebrow">Parte 1 · Integrante 1 · Introducción</p>
+            <h2 id="h-limites">Qué significa esto para Netflix</h2>
+            <p class="lead">Una salida de Estados Unidos y la disponibilidad de contenido son comprobaciones diferentes.
+            </p>
+            <div class="two-col">
+                <article class="rule-col"><span class="num">Red</span>
+                    <h3>Podemos comprobar la salida</h3>
+                    <p>Una consulta de IP muestra qué dirección pública recibe el sitio y qué país le atribuye.</p>
+                    <p>Es evidencia de esa conexión en ese momento.</p>
+                </article>
+                <article class="rule-col"><span class="num">Servicio</span>
+                    <h3>El catálogo depende de Netflix</h3>
+                    <p>Una VPN no garantiza acceder al catálogo estadounidense. Netflix puede mostrar títulos con
+                        licencia global o un error de VPN o proxy.</p>
+                </article>
+            </div>
+            <div class="callout">Netflix no admite VPN para eventos en vivo ni para su experiencia con anuncios. La
+                prueba de reproducción será opcional.</div>
+        </section>
+        <section class="slide " id="opciones" data-part="2" data-title="Dos formas de configurar la VPN en la PC"
+            aria-labelledby="h-opciones">
+            <p class="eyebrow">Parte 2 · Integrante 2 · Opciones</p>
+            <h2 id="h-opciones">Dos formas de configurar la VPN en la PC</h2>
+            <p class="lead">Ambas opciones se realizan desde la computadora. Cambia quién prepara y administra la
+                conexión.</p>
+            <div class="two-col">
+                <article class="option">
+                    <div class="option-heading"><span class="num">01</span><svg viewBox="0 0 80 72" aria-hidden="true">
+                            <g transform="translate(0 0) scale(1)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="8" y="3" width="64" height="64" rx="6" />
+                                <path d="M8 19h64M19 11h1m9 0h1M40 30v14m-9-9a15 15 0 1 0 18 0" />
+                            </g>
+                        </svg></div>
+                    <h3>Aplicación del proveedor</h3>
+                    <p>La app administra la conexión, permite elegir una ubicación y prepara los ajustes necesarios.</p>
+                    <p class="fit">Necesita una cuenta del servicio y la instalación de su aplicación.</p><span
+                        class="tag">Elegida para la práctica</span>
+                </article>
+                <article class="option">
+                    <div class="option-heading"><span class="num">02</span><svg viewBox="0 0 80 72" aria-hidden="true">
+                            <g transform="translate(0 0) scale(1)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="12" y="2" width="56" height="66" rx="6" />
+                                <path d="M12 24h56M12 46h56" />
+                                <path d="M23 13h1M23 35h1M23 57h1" stroke-width="5" />
+                                <path d="M37 13h19M37 35h19M37 57h19" />
+                            </g>
+                        </svg></div>
+                    <h3>Perfil manual de Windows</h3>
+                    <p>Windows permite registrar una conexión VPN con los datos de un servicio compatible.</p>
+                    <p class="fit">Necesita la dirección del servidor, el tipo de VPN y la autenticación indicada por el
+                        proveedor.</p><span class="tag light">Alternativa para comparar</span>
+                </article>
+            </div>
+        </section>
+        <section class="slide " id="opcion-app" data-part="2" data-title="Opción 1: una aplicación VPN"
+            aria-labelledby="h-opcion-app">
+            <p class="eyebrow">Parte 2 · Integrante 2 · Opciones</p>
+            <h2 id="h-opcion-app">Opción 1: una aplicación VPN</h2>
+            <div class="two-col">
+                <div>
+                    <ol class="steps">
+                        <li>
+                            <div><strong>Instalar la app oficial.</strong> Su cliente configura los componentes de red
+                                que necesita.</div>
+                        </li>
+                        <li>
+                            <div><strong>Acceder a la cuenta.</strong> Las ubicaciones disponibles dependen del plan.
+                            </div>
+                        </li>
+                        <li>
+                            <div><strong>Elegir y conectar.</strong> La app establece el túnel con el servidor
+                                seleccionado.</div>
+                        </li>
+                    </ol>
+                </div>
+                <figure class="visual-frame "><svg xmlns="http://www.w3.org/2000/svg" class="network-art"
+                        data-art="aplicacion-vpn" viewBox="0 0 520 275" role="img"
+                        aria-label="Esquema de una aplicación VPN: elegir ubicación y usar el botón de conexión">
+                        <title>Esquema de una aplicación VPN: elegir ubicación y usar el botón de conexión</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <rect x="83" y="15" width="354" height="242" rx="14" fill="#ffffff" stroke="#bed0e2" />
+                            <path d="M83 57h354" stroke="#d5e0ed" />
+                            <circle cx="104" cy="36" r="3" fill="#7d9cb9" />
+                            <circle cx="117" cy="36" r="3" fill="#7d9cb9" /><text x="155" y="42" fill="#56687e"
+                                font-size="13" font-weight="700" text-anchor="start">APLICACIÓN VPN</text>
+                            <circle cx="260" cy="111" r="34" fill="#e7f1fa" />
+                            <g transform="translate(237 90) scale(0.58)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M40 5v30M22 15a29 29 0 1 0 36 0" />
+                            </g><text x="260" y="166" fill="#56687e" font-size="18" font-weight="400"
+                                text-anchor="middle">Elegir ubicación</text>
+                            <rect x="113" y="183" width="294" height="44" rx="7" fill="#edf4fb" /><text x="135" y="211"
+                                fill="#152b46" font-size="20" font-weight="700" text-anchor="start">Estados
+                                Unidos</text>
+                            <path d="m377 201 7 7 7-7" fill="none" stroke="#286db4" stroke-width="2" />
+                        </g>
+                    </svg>
+                    <figcaption>Vista conceptual: elegir una ubicación y conectar. La apariencia real depende de la
+                        aplicación.</figcaption>
+                </figure>
+            </div>
+            <p class="takeaway">Usaremos la aplicación de escritorio de Windscribe para Windows.</p>
+        </section>
+        <section class="slide " id="opcion-manual" data-part="2" data-title="Opción 2: un perfil VPN de Windows"
+            aria-labelledby="h-opcion-manual">
+            <p class="eyebrow">Parte 2 · Integrante 2 · Opciones</p>
+            <h2 id="h-opcion-manual">Opción 2: un perfil VPN de Windows</h2>
+            <p class="path">Configuración <span>›</span> Red e Internet <span>›</span> VPN <span>›</span> Agregar VPN
+            </p>
+            <div class="two-col">
+                <figure class="visual-frame manual-figure"><svg xmlns="http://www.w3.org/2000/svg" class="network-art"
+                        data-art="perfil-windows" viewBox="0 0 520 275" role="img"
+                        aria-label="Esquema de los campos necesarios para guardar un perfil VPN en Windows">
+                        <title>Esquema de los campos necesarios para guardar un perfil VPN en Windows</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <rect x="14" y="8" width="492" height="254" rx="10" fill="#ffffff" stroke="#bed0e2" /><text
+                                x="36" y="42" fill="#286db4" font-size="15" font-weight="700" text-anchor="start">DATOS
+                                DEL PERFIL VPN</text>
+                            <path d="M36 58h448" stroke="#d5e0ed" /><text x="36" y="88" fill="#56687e" font-size="15"
+                                font-weight="400" text-anchor="start">Proveedor</text><text x="191" y="88"
+                                fill="#152b46" font-size="18" font-weight="700" text-anchor="start">Windows
+                                (integrado)</text><text x="36" y="126" fill="#56687e" font-size="15" font-weight="400"
+                                text-anchor="start">Nombre</text><text x="191" y="126" fill="#152b46" font-size="17"
+                                font-weight="400" text-anchor="start">Un nombre para identificarlo</text><text x="36"
+                                y="164" fill="#56687e" font-size="15" font-weight="400"
+                                text-anchor="start">Servidor</text><text x="191" y="164" fill="#152b46" font-size="18"
+                                font-weight="700" text-anchor="start">Dirección del servicio</text><text x="36" y="202"
+                                fill="#56687e" font-size="15" font-weight="400" text-anchor="start">Tipo de
+                                VPN</text><text x="191" y="202" fill="#152b46" font-size="18" font-weight="400"
+                                text-anchor="start">Según el proveedor</text><text x="36" y="240" fill="#56687e"
+                                font-size="15" font-weight="400" text-anchor="start">Autenticación</text><text x="191"
+                                y="240" fill="#152b46" font-size="17" font-weight="400" text-anchor="start">Datos
+                                indicados por el servicio</text>
+                        </g>
+                    </svg>
+                    <figcaption>Esquema de campos; no es una captura de la interfaz de Windows.</figcaption>
+                </figure>
+                <div class="rule-col">
+                    <h3>Cómo se utiliza</h3>
+                    <p>Con los datos de un servicio compatible, guarda el perfil y pulsa <strong>Conectar</strong>.
+                        Windows usa esos parámetros.</p>
+                    <p>Para salir por EE. UU., el servicio debe tener una salida allí y enrutar por ella el tráfico de
+                        la prueba.</p>
+                </div>
+            </div>
+            <div class="callout">Windows incluye el cliente; el servidor y sus credenciales los facilita el proveedor
+                VPN. Esta alternativa no se usa en la práctica.</div>
+        </section>
+        <section class="slide " id="eleccion" data-part="2" data-title="La práctica usará Windscribe gratuito"
+            aria-labelledby="h-eleccion">
+            <p class="eyebrow">Parte 2 · Integrante 2 · Opciones</p>
+            <h2 id="h-eleccion">La práctica usará Windscribe gratuito</h2>
+            <div class="two-col">
+                <div class="plan-panel"><span class="mini-label">Plan gratuito · Información consultada en octubre de
+                        2026</span>
+                    <p class="big-number">2 GB<span>al mes</span></p>
+                    <p>Se amplía a <strong>10 GB al mes</strong> al confirmar el correo electrónico.</p>
+                    <p>Incluye ubicaciones gratuitas en Estados Unidos y no requiere tarjeta bancaria.</p>
+                </div>
+                <div class="rule-col">
+                    <h3>Qué demostraremos</h3>
+                    <p>Conectar la app, observar la IP pública y el país, y volver a la salida habitual.</p>
+                    <h3 class="spaced">Qué necesitaremos</h3>
+                    <p>Una computadora con Windows 11 y acceso a internet. Si ya contamos con ambos, esta práctica puede
+                        realizarse sin un gasto adicional.</p>
+                </div>
+            </div>
+            <p class="takeaway">Las consultas de IP permiten una demostración breve con poco consumo de datos.</p>
+        </section>
+        <section class="slide " id="practica" data-part="3" data-title="Preparar la demostración en clase"
+            aria-labelledby="h-practica">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Práctica</p>
+            <h2 id="h-practica">Preparar la demostración en clase</h2>
+            <div class="two-col">
+                <ol class="steps">
+                    <li>
+                        <div><strong>Conexión disponible.</strong> Usa una red en la que esté permitido realizar la
+                            práctica.</div>
+                    </li>
+                    <li>
+                        <div><strong>Permisos de instalación.</strong> La app puede pedir autorización de administrador
+                            para instalar su adaptador.</div>
+                    </li>
+                    <li>
+                        <div><strong>Ensayo previo.</strong> Comprueba que la VPN conecta y abre las páginas que
+                            utilizarás.</div>
+                    </li>
+                    <li>
+                        <div><strong>Registro de resultados.</strong> Prepara una tabla para anotar la IP y el país
+                            antes y después.</div>
+                    </li>
+                </ol>
+                <div class="big-statement"><span class="mini-label">Duración sugerida</span>
+                    <p><strong>8–10 minutos</strong> para la demostración.</p><span>La instalación y el acceso a la
+                        cuenta pueden quedar preparados antes de exponer.</span>
+                </div>
+            </div>
+            <div class="callout">Si la conexión del salón no es izzi, indícalo. El procedimiento demuestra el mismo
+                principio con el proveedor disponible.</div>
+        </section>
+        <section class="slide " id="instalar" data-part="3" data-title="Instalar y acceder a Windscribe"
+            aria-labelledby="h-instalar">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 1 de 7</p>
+            <h2 id="h-instalar">Instalar y acceder a Windscribe</h2>
+            <div class="two-col">
+                <ol class="steps">
+                    <li>
+                        <div>Abre la página oficial y selecciona <strong>Download for Windows</strong>.</div>
+                    </li>
+                    <li>
+                        <div>Ejecuta el instalador y completa el asistente. Autoriza el adaptador de red si Windows lo
+                            solicita.</div>
+                    </li>
+                    <li>
+                        <div>Crea una <strong>cuenta gratuita</strong> o accede a la que ya tienes.</div>
+                    </li>
+                    <li>
+                        <div>Abre la aplicación y déjala <strong>desconectada</strong> para obtener la medición inicial.
+                        </div>
+                    </li>
+                </ol>
+                <div class="resource-panel"><span class="mini-label">Aplicación de escritorio</span>
+                    <h3>Windscribe para Windows</h3>
+                    <p>Realiza el acceso a la cuenta antes de proyectar, para mantener tus credenciales fuera de la
+                        exposición.</p><a class="button primary" href="https://windscribe.com/download" target="_blank"
+                        rel="noopener noreferrer">Abrir descarga oficial ↗</a>
+                    <p class="url-caption">windscribe.com/download</p>
+                </div>
+            </div>
+        </section>
+        <section class="slide " id="red-local" data-part="3" data-title="Consultar la configuración actual"
+            aria-labelledby="h-red-local">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 2 de 7</p>
+            <h2 id="h-red-local">Consultar la configuración actual</h2>
+            <div class="two-col">
+                <ol class="steps">
+                    <li>
+                        <div>Presiona <strong>Windows + R</strong>, escribe <code>cmd</code> y pulsa Enter.</div>
+                    </li>
+                    <li>
+                        <div>Escribe <code>ipconfig</code> y vuelve a pulsar Enter.</div>
+                    </li>
+                    <li>
+                        <div>Busca el adaptador conectado: <strong>Wi-Fi o Ethernet</strong>.</div>
+                    </li>
+                    <li>
+                        <div>Identifica su <strong>IPv4</strong> y su <strong>puerta de enlace predeterminada</strong>.
+                        </div>
+                    </li>
+                </ol>
+                <div class="terminal">
+                    <p class="mini-label">Comando para ejecutar en tu PC</p>
+                    <div class="command">C:\&gt; ipconfig</div><button class="terminal-button" id="copyCommand">Copiar
+                        comando</button>
+                    <div class="terminal-rule"></div>
+                    <p>IPv4 del adaptador → dirección local</p>
+                    <p>Puerta de enlace → salida hacia otras redes</p><small>Los valores se obtienen de tu computadora.
+                        No hay direcciones preestablecidas para la práctica.</small>
+                </div>
+            </div>
+            <p class="takeaway"><code>ipconfig</code> consulta la configuración. La IP pública se revisa en el siguiente
+                paso.</p>
+        </section>
+        <section class="slide " id="ip-inicial" data-part="3" data-title="Registrar la IP pública sin VPN"
+            aria-labelledby="h-ip-inicial">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 3 de 7</p>
+            <h2 id="h-ip-inicial">Registrar la IP pública sin VPN</h2>
+            <div class="two-col">
+                <ol class="steps">
+                    <li>
+                        <div>Confirma que Windscribe está <strong>desconectado</strong>.</div>
+                    </li>
+                    <li>
+                        <div>Abre el comprobador de IP desde el navegador de esa misma computadora.</div>
+                    </li>
+                    <li>
+                        <div>Anota la <strong>IP pública</strong> y el <strong>país detectado</strong>. Si muestra IPv4
+                            e IPv6, registra ambas.</div>
+                    </li>
+                </ol>
+                <div class="resource-panel"><span class="mini-label">Primera observación</span><svg
+                        xmlns="http://www.w3.org/2000/svg" class="network-art" data-art="consulta-ip"
+                        viewBox="0 0 520 150" role="img"
+                        aria-label="Un sitio web identifica la dirección pública desde la que llega la conexión">
+                        <title>Un sitio web identifica la dirección pública desde la que llega la conexión</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <g transform="translate(13 30) scale(1.15)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="40" cy="35" r="30" />
+                                <ellipse cx="40" cy="35" rx="13" ry="30" />
+                                <path d="M10 35h60M16 18h48M16 52h48" />
+                            </g>
+                            <path d="M124 70h67" stroke="#94b6d6" stroke-width="2" />
+                            <path d="m181 64 10 6-10 6" fill="none" stroke="#286db4" stroke-width="2" />
+                            <rect x="211" y="18" width="291" height="115" rx="8" fill="#ffffff" stroke="#b8cee2" /><text
+                                x="231" y="48" fill="#286db4" font-size="13" font-weight="700"
+                                text-anchor="start">COMPROBADOR WEB</text><text x="231" y="78" fill="#152b46"
+                                font-size="19" font-weight="700" text-anchor="start">IP pública observada</text><text
+                                x="231" y="109" fill="#56687e" font-size="18" font-weight="400" text-anchor="start">País
+                                estimado por esa IP</text>
+                        </g>
+                    </svg>
+                    <p class="art-explanation">Anota los valores reales que aparezcan en el comprobador.</p><a
+                        class="button primary" href="https://windscribe.com/what-is-my-ip" target="_blank"
+                        rel="noopener noreferrer">Abrir comprobador de IP ↗</a>
+                    <p class="url-caption">windscribe.com/what-is-my-ip</p>
+                </div>
+            </div>
+            <p class="takeaway">El país se estima a partir de la IP. No es una medición de la ubicación física de la
+                computadora.</p>
+        </section>
+        <section class="slide " id="conectar" data-part="3" data-title="Elegir Estados Unidos y conectar"
+            aria-labelledby="h-conectar">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 4 de 7</p>
+            <h2 id="h-conectar">Elegir Estados Unidos y conectar</h2>
+            <div class="two-col connection-layout">
+                <ol class="wide-steps">
+                    <li><span>01</span>
+                        <div>
+                            <h3>Abre la lista de ubicaciones</h3>
+                            <p>Selecciona una ubicación gratuita de Estados Unidos. Las que tienen estrella son de pago.
+                            </p>
+                        </div>
+                    </li>
+                    <li><span>02</span>
+                        <div>
+                            <h3>Revisa los ajustes de la prueba</h3>
+                            <p>Deja el protocolo predeterminado y desactiva <strong>Split Tunneling</strong> para que el
+                                navegador use la VPN.</p>
+                        </div>
+                    </li>
+                    <li><span>03</span>
+                        <div>
+                            <h3>Pulsa el botón de conexión</h3>
+                            <p>Espera la confirmación de la app. Después verifica la IP desde el navegador.</p>
+                        </div>
+                    </li>
+                </ol>
+                <figure class="visual-frame "><svg xmlns="http://www.w3.org/2000/svg" class="network-art"
+                        data-art="conectar-y-comprobar" viewBox="0 0 520 310" role="img"
+                        aria-label="Dos comprobaciones distintas: conexión activa en la aplicación y salida pública observada en el navegador">
+                        <title>Dos comprobaciones distintas: conexión activa en la aplicación y salida pública observada
+                            en el navegador</title>
+                        <g font-family="Arial, Helvetica, sans-serif">
+                            <rect x="24" y="18" width="472" height="108" rx="10" fill="#133b63" />
+                            <g transform="translate(40 42) scale(0.76)" fill="none" stroke="#b9ddfa" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="40" cy="35" r="29" />
+                                <path d="m25 35 10 10 22-22" />
+                            </g><text x="123" y="57" fill="#b9ddfa" font-size="13" font-weight="700"
+                                text-anchor="start">EN LA APLICACIÓN</text><text x="123" y="91" fill="#ffffff"
+                                font-size="24" font-weight="700" text-anchor="start">Conexión activa</text>
+                            <path d="M260 138v33m-7-8 7 8 7-8" fill="none" stroke="#6b94ba" stroke-width="2" />
+                            <rect x="24" y="183" width="472" height="108" rx="10" fill="#ffffff" stroke="#bed0e2" />
+                            <g transform="translate(40 206) scale(0.76)" fill="none" stroke="#286db4" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="40" cy="35" r="30" />
+                                <ellipse cx="40" cy="35" rx="13" ry="30" />
+                                <path d="M10 35h60M16 18h48M16 52h48" />
+                            </g><text x="123" y="222" fill="#286db4" font-size="13" font-weight="700"
+                                text-anchor="start">EN EL NAVEGADOR</text><text x="123" y="256" fill="#152b46"
+                                font-size="24" font-weight="700" text-anchor="start">Verificar IP y país</text>
+                        </g>
+                    </svg>
+                    <figcaption>Secuencia de comprobación. El esquema no representa una medición real.</figcaption>
+                </figure>
+            </div>
+            <div class="callout"><strong>Split Tunneling</strong> significa túnel dividido: permite decidir qué
+                aplicaciones o destinos usan la VPN.</div>
+        </section>
+        <section class="slide " id="comparar" data-part="3" data-title="Comprobar qué cambió"
+            aria-labelledby="h-comparar">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 5 de 7</p>
+            <h2 id="h-comparar">Comprobar qué cambió</h2>
+            <p class="lead">Actualiza el mismo comprobador de IP en la misma computadora. Registra lo que realmente
+                muestra.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Momento</th>
+                            <th>IP pública observada</th>
+                            <th>País detectado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sin VPN</td>
+                            <td>Anota el primer resultado</td>
+                            <td>Anota el país</td>
+                        </tr>
+                        <tr>
+                            <td>Con VPN activa</td>
+                            <td>Anota el nuevo resultado</td>
+                            <td>Comprueba si indica EE. UU.</td>
+                        </tr>
+                        <tr>
+                            <td>Al desconectar</td>
+                            <td>Se completa en el paso 7</td>
+                            <td>Se completa en el paso 7</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="two-col after-table">
+                <div>
+                    <h3>Si cambia la salida</h3>
+                    <p>La consulta está usando otra IP pública. Una ubicación de EE. UU. respalda el resultado buscado
+                        para esa consulta.</p>
+                </div>
+                <div>
+                    <h3>Si sigue igual</h3>
+                    <p>Revisa el estado de la app y que el navegador participe en el túnel. Actualiza la página antes de
+                        concluir.</p>
+                </div>
+            </div>
+            <p class="takeaway">La IPv4 local del Wi-Fi puede permanecer igual. La tabla registra datos públicos, no los
+                de <code>ipconfig</code>.</p>
+        </section>
+        <section class="slide " id="netflix" data-part="3" data-title="Observar la respuesta de Netflix"
+            aria-labelledby="h-netflix">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 6 de 7</p>
+            <h2 id="h-netflix">Observar la respuesta de Netflix</h2>
+            <div class="two-col">
+                <div class="rule-col">
+                    <h3>Comprobación opcional</h3>
+                    <p>Si cuentas con una suscripción activa, abre Netflix en esa computadora y observa su respuesta.
+                    </p>
+                    <p>El objetivo principal de la práctica ya es comprobar el cambio de salida a internet.</p>
+                </div>
+                <div class="rule-col">
+                    <h3>Resultados posibles</h3>
+                    <ul class="plain-list">
+                        <li>Disponibilidad limitada a títulos con licencia global.</li>
+                        <li>Un mensaje de VPN o proxy.</li>
+                        <li>Un título que sí se reproduce, sin que eso pruebe un catálogo completo.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Si Netflix rechaza la VPN, registra el resultado y vuelve a la conexión habitual. Una
+                VPN conectada no garantiza reproducción ni catálogo estadounidense.</div>
+        </section>
+        <section class="slide " id="desconectar" data-part="3" data-title="Volver a la conexión habitual"
+            aria-labelledby="h-desconectar">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Paso 7 de 7</p>
+            <h2 id="h-desconectar">Volver a la conexión habitual</h2>
+            <div class="two-col">
+                <ol class="steps">
+                    <li>
+                        <div>En Windscribe, pulsa el botón para <strong>desconectar</strong>.</div>
+                    </li>
+                    <li>
+                        <div>Actualiza el comprobador de IP en el navegador.</div>
+                    </li>
+                    <li>
+                        <div>Completa la última fila de la tabla y verifica la salida habitual.</div>
+                    </li>
+                    <li>
+                        <div>Comprueba que puedes seguir navegando normalmente.</div>
+                    </li>
+                </ol>
+                <div class="big-statement"><span class="mini-label">Resultado final</span>
+                    <p>La computadora vuelve a usar su <strong>conexión habitual</strong>.</p><span>La IP pública no
+                        tiene que ser exactamente idéntica a la del inicio.</span>
+                </div>
+            </div>
+            <div class="callout">Si no recuperas internet, revisa si el modo Firewall de Windscribe mantiene bloqueado
+                el tráfico sin VPN y consulta su ayuda. Ese ajuste pertenece a la aplicación.</div>
+        </section>
+        <section class="slide " id="aprendizaje" data-part="3" data-title="Lo que demuestra la práctica"
+            aria-labelledby="h-aprendizaje">
+            <p class="eyebrow">Parte 3 · Integrante 3 · Práctica</p>
+            <h2 id="h-aprendizaje">Lo que demuestra la práctica</h2>
+            <div class="summary-lines">
+                <p>La VPN se configura <span>en la computadora.</span></p>
+                <p>La IP pública observada <span>puede cambiar.</span></p>
+                <p>La dirección local <span>puede mantenerse.</span></p>
+                <p>El catálogo de Netflix <span>no queda garantizado.</span></p>
+            </div>
+            <p class="takeaway">La evidencia es la comparación de los resultados reales antes, durante y después de la
+                conexión.</p>
+        </section>
+        <section class="slide thanks-slide" id="gracias" data-part="0" data-title="Gracias por su atención"
+            aria-labelledby="h-gracias">
+            <p class="eyebrow">Cierre del equipo</p>
+            <h2 id="h-gracias">Gracias por su atención</h2>
+            <div class="thanks">
+                <div class="thanks-line" aria-hidden="true"></div>
+                <p>Preguntas y comentarios</p><span>Configuración de una VPN desde una computadora</span>
+            </div>
+            <div class="actions"><button data-go="practica">Volver a la práctica</button><button
+                    data-go="referencias-1">Consultar referencias</button></div>
+        </section>
+        <section class="slide references" id="referencias-1" data-part="0" data-title="Referencias · 1 de 3"
+            aria-labelledby="h-referencias-1">
+            <p class="eyebrow">Fuentes de consulta</p>
+            <h2 id="h-referencias-1">Referencias · 1 de 3</h2>
+            <ol class="apa-list">
+                <li>Microsoft. <i>Conectarse a una VPN en Windows.</i> Soporte técnico de Microsoft. <a
+                        href="https://support.microsoft.com/es-es/windows/experience/connectivity-networking/connect-to-a-vpn-in-windows"
+                        target="_blank"
+                        rel="noopener noreferrer">https://support.microsoft.com/es-es/windows/experience/connectivity-networking/connect-to-a-vpn-in-windows</a>
+                </li>
+                <li>Microsoft. (2025, 16 de agosto). <i>ipconfig.</i> Microsoft Learn. <a
+                        href="https://learn.microsoft.com/es-es/windows-server/administration/windows-commands/ipconfig"
+                        target="_blank"
+                        rel="noopener noreferrer">https://learn.microsoft.com/es-es/windows-server/administration/windows-commands/ipconfig</a>
+                </li>
+                <li>Netflix. <i>Netflix indica: “Parece que estás usando una VPN o un proxy”.</i> Centro de ayuda. <a
+                        href="https://help.netflix.com/es/node/277" target="_blank"
+                        rel="noopener noreferrer">https://help.netflix.com/es/node/277</a></li>
+                <li>Netflix. <i>Ver series y películas por medio de una VPN.</i> Centro de ayuda. <a
+                        href="https://help.netflix.com/es/node/114701" target="_blank"
+                        rel="noopener noreferrer">https://help.netflix.com/es/node/114701</a></li>
+            </ol>
+            <p class="reference-note">Enlaces directos a las fuentes originales · Consulta: 28 de octubre de 2026.</p>
+        </section>
+        <section class="slide references" id="referencias-2" data-part="0" data-title="Referencias · 2 de 3"
+            aria-labelledby="h-referencias-2">
+            <p class="eyebrow">Fuentes de consulta</p>
+            <h2 id="h-referencias-2">Referencias · 2 de 3</h2>
+            <ol class="apa-list">
+                <li>Shaun C. (2026, 24 de agosto). <i>How to set up &amp; use Windscribe on a Windows PC.</i>
+                    Windscribe. <a
+                        href="https://windscribe.com/knowledge-base/articles/getting-started-with-windscribe-on-windows"
+                        target="_blank"
+                        rel="noopener noreferrer">https://windscribe.com/knowledge-base/articles/getting-started-with-windscribe-on-windows</a>
+                </li>
+                <li>Windscribe. <i>Get a free VPN with pro features.</i> Recuperado el 28 de octubre de 2026, de <a
+                        href="https://windscribe.com/features/use-for-free" target="_blank"
+                        rel="noopener noreferrer">https://windscribe.com/features/use-for-free</a></li>
+                <li>Windscribe. <i>Split tunneling.</i> <a href="https://windscribe.com/features/split-tunneling"
+                        target="_blank" rel="noopener noreferrer">https://windscribe.com/features/split-tunneling</a>
+                </li>
+                <li>Windscribe. <i>What is my IP?</i> Recuperado el 28 de octubre de 2026, de <a
+                        href="https://windscribe.com/what-is-my-ip" target="_blank"
+                        rel="noopener noreferrer">https://windscribe.com/what-is-my-ip</a></li>
+            </ol>
+            <p class="reference-note">Enlaces directos a las fuentes originales · Consulta: 28 de octubre de 2026.</p>
+        </section>
+        <section class="slide references" id="referencias-visuales" data-part="0"
+            data-title="Referencias visuales · 3 de 3" aria-labelledby="h-referencias-visuales">
+            <p class="eyebrow">Fuentes técnicas de las ilustraciones</p>
+            <h2 id="h-referencias-visuales">Referencias visuales · 3 de 3</h2>
+            <p class="visual-sources-intro">Las ilustraciones vectoriales se crearon para esta presentación y están
+                integradas en el HTML. Son esquemas explicativos, no capturas de software ni resultados de la práctica.
+                Su contenido se apoya en estas fuentes:</p>
+            <ol class="apa-list">
+                <li>Microsoft. <i>Conectarse a una VPN en Windows.</i> Soporte técnico de Microsoft.<a
+                        href="https://support.microsoft.com/es-es/windows/experience/connectivity-networking/connect-to-a-vpn-in-windows"
+                        target="_blank"
+                        rel="noopener noreferrer">https://support.microsoft.com/es-es/windows/experience/connectivity-networking/connect-to-a-vpn-in-windows</a><span
+                        class="source-scope">Base conceptual del túnel VPN y de los campos del perfil de Windows.</span>
+                </li>
+                <li>Shaun C. (2026, 24 de agosto). <i>How to set up &amp; use Windscribe on a Windows PC.</i>
+                    Windscribe.<a
+                        href="https://windscribe.com/knowledge-base/articles/getting-started-with-windscribe-on-windows"
+                        target="_blank"
+                        rel="noopener noreferrer">https://windscribe.com/knowledge-base/articles/getting-started-with-windscribe-on-windows</a><span
+                        class="source-scope">Base del esquema de selección de ubicación y conexión desde la
+                        aplicación.</span></li>
+                <li>Windscribe. <i>What is my IP?</i> Recuperado el 28 de octubre de 2026, de <a
+                        href="https://windscribe.com/what-is-my-ip" target="_blank"
+                        rel="noopener noreferrer">https://windscribe.com/what-is-my-ip</a><span
+                        class="source-scope">Base del esquema de observación de la IP pública y del país
+                        estimado.</span></li>
+            </ol>
+            <p class="reference-note">Los enlaces llevan a las fuentes originales. Los iconos de equipos y redes forman
+                parte de los esquemas de esta presentación.</p>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="slide-count"><b id="currentNo">01</b> / <span id="totalNo">22</span></div>
+        <div class="progress" role="progressbar" aria-label="Avance de la presentación" aria-valuemin="1"
+            aria-valuemax="22" aria-valuenow="1">
+            <div id="progressFill"></div>
+        </div><span class="footer-label" id="footerLabel"></span>
+        <div class="nav-buttons"><button id="prevSlide" aria-label="Diapositiva anterior"
+                title="Anterior (flecha izquierda)">←</button><button id="nextSlide" aria-label="Diapositiva siguiente"
+                title="Siguiente (flecha derecha)">→</button></div>
+    </footer>
+    <dialog id="indexDialog" aria-labelledby="indexTitle">
+        <div class="dialog-head">
+            <h2 id="indexTitle">Índice de la presentación</h2><button id="closeIndex">Cerrar</button>
+        </div>
+        <div class="index-grid" id="indexGrid"></div>
+        <p class="index-help">Flechas: navegar · I: índice · F: pantalla completa. En pantallas pequeñas, desplázate
+            para leer toda la diapositiva.</p>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
+    <div class="sr-only" id="slideAnnounce" aria-live="polite"></div><noscript>
+        <style>
+            .slide {
+                display: block !important
+            }
+
+            .footer,
+            .part-nav,
+            .top-actions {
+                display: none
+            }
+
+            main {
+                padding-bottom: 0
+            }
+        </style>
+        <p>Activa JavaScript para utilizar la navegación y las animaciones.</p>
+    </noscript>
+    <script>
+        'use strict';
+        const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+        const slides = $$('.slide');
+        let current = 0, toastTimer;
+        function toast(message) {clearTimeout(toastTimer); $('#toast').textContent = message; $('#toast').hidden = false; toastTimer = setTimeout(() => $('#toast').hidden = true, 3500);}
+        function showSlide(index, updateHash = true) {
+            current = Math.max(0, Math.min(slides.length - 1, index));
+            slides.forEach((s, i) => {s.classList.toggle('active', i === current); s.setAttribute('aria-hidden', String(i !== current));});
+            $('#currentNo').textContent = String(current + 1).padStart(2, '0'); $('#totalNo').textContent = String(slides.length);
+            $('#footerLabel').textContent = slides[current].dataset.title;
+            $('#progressFill').style.width = ((current + 1) / slides.length * 100) + '%'; $('.progress').setAttribute('aria-valuenow', String(current + 1));
+            $('#prevSlide').disabled = current === 0; $('#nextSlide').disabled = current === slides.length - 1;
+            $$('#indexGrid button').forEach((b, i) => b.setAttribute('aria-current', String(i === current)));
+            $$('.part-nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.part === slides[current].dataset.part)));
+            $('#slideAnnounce').textContent = `Diapositiva ${current + 1} de ${slides.length}. ${slides[current].dataset.title}`;
+            if (updateHash) {try {history.replaceState(null, '', '#' + slides[current].id);} catch { } }
+            window.scrollTo({top: 0, behavior: 'instant'});
+        }
+        function go(id) {const i = slides.findIndex(s => s.id === id); if (i >= 0) showSlide(i);}
+        slides.forEach((s, i) => {const b = document.createElement('button'); b.dataset.index = String(i); const n = document.createElement('span'); n.textContent = String(i + 1).padStart(2, '0'); b.append(n, document.createTextNode(s.dataset.title)); $('#indexGrid').append(b);});
+        $('#indexGrid').addEventListener('click', e => {const b = e.target.closest('[data-index]'); if (b) {$('#indexDialog').close(); showSlide(Number(b.dataset.index));} });
+        $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+        $('#prevSlide').onclick = () => showSlide(current - 1); $('#nextSlide').onclick = () => showSlide(current + 1);
+        $('#indexBtn').onclick = () => $('#indexDialog').showModal(); $('#closeIndex').onclick = () => $('#indexDialog').close();
+        $('#indexDialog').addEventListener('click', e => {if (e.target === $('#indexDialog')) {const r = e.target.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.target.close();} });
+        let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function setMotion(v) {motion = v; document.body.classList.toggle('no-motion', !v); $('#motionBtn').textContent = 'Animación: ' + (v ? 'sí' : 'no'); $('#motionBtn').setAttribute('aria-pressed', String(v));}
+        $('#motionBtn').onclick = () => setMotion(!motion); setMotion(motion);
+        async function fullscreen() {try {if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen();} catch {toast('La pantalla completa no está disponible en este navegador.');} }
+        $('#fullBtn').onclick = fullscreen; document.addEventListener('fullscreenchange', () => $('#fullBtn').textContent = document.fullscreenElement ? 'Salir de pantalla' : 'Pantalla completa');
+        document.addEventListener('keydown', e => {
+            if (e.target.closest('input,textarea,select') || e.altKey || e.ctrlKey || e.metaKey || $('#indexDialog').open) return;
+            if (e.key === 'ArrowRight' || e.key === 'PageDown') {e.preventDefault(); showSlide(current + 1);} else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {e.preventDefault(); showSlide(current - 1);} else if (e.key === 'Home') {e.preventDefault(); showSlide(0);} else if (e.key === 'End') {e.preventDefault(); showSlide(slides.length - 1);} else if (e.key.toLowerCase() === 'i') $('#indexDialog').showModal(); else if (e.key.toLowerCase() === 'f') fullscreen();
+        });
+        window.addEventListener('hashchange', () => {const i = slides.findIndex(s => s.id === location.hash.slice(1)); if (i >= 0) showSlide(i, false);});
+        async function copy(text, success) {
+            try {await navigator.clipboard.writeText(text); toast(success); return;} catch { }
+            const focus = document.activeElement, field = document.createElement('textarea'); field.value = text; field.setAttribute('readonly', ''); field.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.append(field); field.select();
+            let copied = false; try {copied = document.execCommand('copy');} catch { } field.remove(); if (focus instanceof HTMLElement) focus.focus({preventScroll: true}); toast(copied ? success : 'Copia el texto mostrado en la diapositiva.');
+        }
+        $('#copyCommand').onclick = () => copy('ipconfig', 'Comando copiado: ipconfig');
+        const initial = slides.findIndex(s => s.id === location.hash.slice(1)); $('.progress').setAttribute('aria-valuemax', String(slides.length)); showSlide(initial < 0 ? 0 : initial, false);
+        window.addEventListener('load', () => requestAnimationFrame(() => window.scrollTo({top: 0, behavior: 'instant'})));
+    </script>
+</body>
+
+</html>
